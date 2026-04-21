@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Timeline Patterns — 7 UX Combos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    font-feature-settings: "cv02","cv03","cv04","cv11","ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .heat-0 { background: rgba(255,255,255,0.03); }
+  .heat-1 { background: rgba(251,146,60,0.15); }
+  .heat-2 { background: rgba(251,146,60,0.30); }
+  .heat-3 { background: rgba(251,146,60,0.50); }
+  .heat-4 { background: rgba(251,146,60,0.75); }
+  .heat-5 { background: rgba(251,146,60,1); }
+  .lane-block {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    border-radius: 3px;
+    transition: filter 0.15s;
+  }
+  .lane-block:hover { filter: brightness(1.4); cursor: pointer; }
+  [data-tab-pane] { display: none; }
+  [data-tab-pane].active { display: block; }
+  [data-tab-btn].active {
+    background: rgba(255,255,255,0.08);
+    color: rgb(244,244,245);
+  }
+  .playhead {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: rgb(251,146,60);
+    pointer-events: none;
+    box-shadow: 0 0 12px rgba(251,146,60,0.6);
+  }
+  .playhead::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: -5px;
+    width: 12px; height: 12px;
+    background: rgb(251,146,60);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(251,146,60,0.8);
+  }
+</style>
+</head>
+<body class="bg-zinc-950 text-zinc-200 font-sans antialiased">
+
+<!-- Header -->
+<header class="border-b border-zinc-900 sticky top-0 bg-zinc-950/90 backdrop-blur-xl z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-7 h-7 rounded bg-gradient-to-br from-orange-500 to-red-700 flex items-center justify-center text-sm shadow-lg shadow-orange-500/20">👁</div>
+      <div>
+        <div class="font-medium text-sm tracking-tight">Timeline Patterns</div>
+        <div class="text-[11px] text-zinc-500">7 UX combos · wireframe preview</div>
+      </div>
+    </div>
+    <nav class="flex gap-0.5 text-xs">
+      <a href="#combo-a" class="px-2.5 py-1 rounded text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300 transition">A</a>
+      <a href="#combo-b" class="px-2.5 py-1 rounded text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300 transition">B</a>
+      <a href="#combo-c" class="px-2.5 py-1 rounded text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300 transition">C</a>
+      <a href="#combo-d" class="px-2.5 py-1 rounded text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300 transition">D</a>
+      <a href="#combo-e" class="px-2.5 py-1 rounded text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300 transition">E</a>
+      <a href="#combo-f" class="px-2.5 py-1 rounded text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300 transition">F</a>
+      <a href="#combo-g" class="px-2.5 py-1 rounded text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300 transition">G</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-16 space-y-28">
+
+  <!-- Intro -->
+  <section class="max-w-2xl">
+    <div class="text-xs text-orange-400/80 uppercase tracking-widest mb-3">Pattern catalog → prototypes</div>
+    <h1 class="text-4xl font-medium tracking-tight text-zinc-50 mb-4">7 ways to build a timeline UI.</h1>
+    <p class="text-zinc-400 leading-relaxed">Each mockup composes patterns from the <code class="text-orange-300 bg-orange-950/30 px-1.5 py-0.5 rounded text-[13px]">/timeline-patterns</code> reference. Same fake data across all of them, so differences are about <em class="text-zinc-300 not-italic font-medium">which axis you bent</em>, not which events you picked. Pick one, build it, use it for a day.</p>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- COMBO A — Slack for your life -->
+  <!-- ======================================================================== -->
+  <section id="combo-a" class="space-y-5">
+    <div class="flex items-baseline justify-between flex-wrap gap-3">
+      <div>
+        <div class="text-[11px] text-orange-400/80 uppercase tracking-widest mb-1.5">Combo A · Low effort · Ships in a day</div>
+        <h2 class="text-2xl font-medium tracking-tight text-zinc-50">Slack for your life</h2>
+        <p class="text-zinc-400 text-sm mt-1.5 max-w-xl">Reverse-chron feed, session clustering, master-detail split. The baseline every other combo has to beat.</p>
+      </div>
+      <div class="text-[11px] text-zinc-500 text-right leading-relaxed">
+        §1.1 Reverse-chron feed<br>
+        §2.2 Session clustering<br>
+        §4.2 Master-detail · §3.5 Keyboard
+      </div>
+    </div>
+
+    <!-- mockup -->
+    <div class="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/30 shadow-2xl shadow-black/40">
+      <!-- toolbar -->
+      <div class="border-b border-zinc-800 px-4 py-2.5 flex items-center justify-between bg-zinc-950/50">
+        <div class="flex items-center gap-3 text-xs">
+          <span class="text-zinc-300 font-medium">Today</span>
+          <span class="text-zinc-700">·</span>
+          <span class="text-zinc-500">3h 42m active · focus 0.72 · 147 events</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 text-[11px] text-zinc-400 bg-zinc-900/80 border border-zinc-800 px-2 py-1 rounded font-mono">
+            <span>⌘K</span>
+            <span class="text-zinc-500">search</span>
+          </div>
+        </div>
+      </div>
+      <!-- split -->
+      <div class="grid grid-cols-[360px_1fr] h-[540px]">
+        <!-- feed -->
+        <div class="border-r border-zinc-800 overflow-y-auto scrollbar-thin">
+          <div class="sticky top-0 bg-zinc-900/95 backdrop-blur px-4 py-2 text-[11px] text-zinc-500 font-medium border-b border-zinc-800 z-10 uppercase tracking-wider">
+            Today · April 21
+          </div>
+
+          <!-- session 1 -->
+          <div class="border-b border-zinc-900">
+            <div class="px-4 py-2 text-[11px] text-zinc-500 flex items-center justify-between bg-zinc-950/50">
+              <div class="flex items-center gap-2">
+                <div class="w-1 h-1 rounded-full bg-orange-400"></div>
+                <span>Coding · 11:15 → now</span>
+              </div>
+              <span class="text-zinc-600">42 events</span>
+            </div>
+            <!-- selected row -->
+            <div class="px-4 py-2.5 bg-orange-500/10 border-l-2 border-orange-400 flex items-start gap-3">
+              <div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-[11px] mt-0.5">⌨</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm text-zinc-100 truncate">Editing <span class="font-mono text-[12px] text-orange-300">page.tsx</span></div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">VS Code · 12:47</div>
+              </div>
+            </div>
+            <div class="px-4 py-2.5 hover:bg-zinc-900/40 flex items-start gap-3 cursor-pointer">
+              <div class="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center text-[11px] mt-0.5">⌘</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm text-zinc-300 truncate font-mono text-[12px]">git commit -m "scrubber v2"</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Terminal · 12:42</div>
+              </div>
+            </div>
+            <div class="px-4 py-2.5 hover:bg-zinc-900/40 flex items-start gap-3 cursor-pointer">
+              <div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-[11px] mt-0.5">🌐</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm text-zinc-300 truncate">rewind.ai — homepage</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Chrome · 12:38</div>
+              </div>
+            </div>
+            <div class="px-4 py-2 hover:bg-zinc-900/40 flex items-center gap-3 cursor-pointer text-zinc-500">
+              <div class="w-6 h-6 rounded bg-zinc-900 flex items-center justify-center text-[10px]">📋</div>
+              <div class="text-[12px] flex-1">8 clipboard captures</div>
+              <div class="text-[11px]">12:31</div>
+            </div>
+            <div class="px-4 py-2.5 hover:bg-zinc-900/40 flex items-start gap-3 cursor-pointer">
+              <div class="w-6 h-6 rounded bg-purple-500/20 flex items-center justify-center text-[11px] mt-0.5">🎨</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm text-zinc-300 truncate">Timeline mockup v3</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Figma · 12:15</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- session 2 -->
+          <div class="border-b border-zinc-900">
+            <div class="px-4 py-2 text-[11px] text-zinc-500 flex items-center justify-between bg-zinc-950/50">
+              <div class="flex items-center gap-2">
+                <div class="w-1 h-1 rounded-full bg-zinc-600"></div>
+                <span>Lunch break · 12:01 → 12:14</span>
+              </div>
+              <span class="text-zinc-600">3 events</span>
+            </div>
+            <div class="px-4 py-2.5 hover:bg-zinc-900/40 flex items-start gap-3 cursor-pointer">
+              <div class="w-6 h-6 rounded bg-pink-500/20 flex items-center justify-center text-[11px] mt-0.5">💬</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm text-zinc-300 truncate">@ayesha lunch at 1?</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Slack · 12:01</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- session 3 -->
+          <div class="border-b border-zinc-900">
+            <div class="px-4 py-2 text-[11px] text-zinc-500 flex items-center justify-between bg-zinc-950/50">
+              <div class="flex items-center gap-2">
+                <div class="w-1 h-1 rounded-full bg-zinc-600"></div>
+                <span>Research · 10:45 → 11:14</span>
+              </div>
+              <span class="text-zinc-600">18 events</span>
+            </div>
+            <div class="px-4 py-2.5 hover:bg-zinc-900/40 flex items-start gap-3 cursor-pointer">
+              <div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-[11px] mt-0.5">🌐</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm text-zinc-300 truncate">Apple Photos · design patterns</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Chrome · 11:02</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sticky top-0 bg-zinc-900/95 backdrop-blur px-4 py-2 text-[11px] text-zinc-500 font-medium border-b border-t border-zinc-800 uppercase tracking-wider">
+            Yesterday · April 20
+          </div>
+          <div class="px-4 py-2.5 hover:bg-zinc-900/40 flex items-start gap-3 cursor-pointer opacity-60">
+            <div class="w-6 h-6 rounded bg-blue-500/10 flex items-center justify-center text-[11px] mt-0.5">⌨</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm text-zinc-400 truncate">install script</div>
+              <div class="text-[11px] text-zinc-600 mt-0.5">VS Code · 23:14</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- detail pane -->
+        <div class="overflow-y-auto scrollbar-thin bg-zinc-950/30">
+          <div class="p-6 space-y-6">
+            <div class="flex items-center gap-2 text-[11px] text-zinc-500 uppercase tracking-wider">
+              <span>12:47 PM</span>
+              <span class="text-zinc-700">·</span>
+              <span>VS Code</span>
+              <span class="text-zinc-700">·</span>
+              <span class="text-orange-400/80">Coding session</span>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-500 mb-1">Editing</div>
+              <h3 class="text-xl font-medium text-zinc-100 font-mono">src/app/timeline/page.tsx</h3>
+            </div>
+            <!-- screenshot -->
+            <div class="rounded-lg border border-zinc-800 overflow-hidden bg-zinc-900">
+              <div class="aspect-video grid-bg relative">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="text-xs text-zinc-600 font-mono">screenshot · 1440×900</div>
+                </div>
+              </div>
+            </div>
+            <!-- meta -->
+            <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+              <div>
+                <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-1">Session</div>
+                <div class="text-zinc-300">Coding · 11:15→now</div>
+              </div>
+              <div>
+                <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-1">Focus</div>
+                <div class="text-zinc-300">0.82 <span class="text-zinc-500 text-xs">/ 1.0</span></div>
+              </div>
+              <div>
+                <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-1">Duration on file</div>
+                <div class="text-zinc-300">17 min</div>
+              </div>
+              <div>
+                <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-1">Clipboard nearby</div>
+                <div class="text-zinc-300">3 captures</div>
+              </div>
+            </div>
+            <!-- nearby events -->
+            <div>
+              <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-2">Nearby clipboard</div>
+              <div class="space-y-1.5">
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-400 font-mono">"horizontal scrubber"</div>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-400 font-mono">const scrubPosition = useState(0)</div>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-400 font-mono">@tanstack/react-virtual</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- keyboard strip -->
+      <div class="border-t border-zinc-800 px-4 py-1.5 flex items-center gap-4 text-[11px] text-zinc-600 bg-zinc-950/50 font-mono">
+        <span><span class="text-zinc-400">j</span>/<span class="text-zinc-400">k</span> nav</span>
+        <span><span class="text-zinc-400">g d</span> go-to-date</span>
+        <span><span class="text-zinc-400">/</span> search</span>
+        <span><span class="text-zinc-400">⌘K</span> palette</span>
+        <span class="ml-auto"><span class="text-zinc-400">?</span> help</span>
+      </div>
+    </div>
+
+    <div class="text-xs text-zinc-500 italic max-w-2xl">Failure mode: if sessions auto-cluster too aggressively, the user can't see individual events without extra clicks. Start with a 15-min gap threshold and instrument expand rate.</div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- COMBO B — Rewind, done right -->
+  <!-- ======================================================================== -->
+  <section id="combo-b" class="space-y-5">
+    <div class="flex items-baseline justify-between flex-wrap gap-3">
+      <div>
+        <div class="text-[11px] text-orange-400/80 uppercase tracking-widest mb-1.5">Combo B · Medium effort · Highest differentiation</div>
+        <h2 class="text-2xl font-medium tracking-tight text-zinc-50">Rewind, done right</h2>
+        <p class="text-zinc-400 text-sm mt-1.5 max-w-xl">Horizontal scrubber + thumbnail strip + gallery below. For the "I know it was around 2pm Tuesday" case.</p>
+      </div>
+      <div class="text-[11px] text-zinc-500 text-right leading-relaxed">
+        §1.5 Scrubber · §2.6 Gallery<br>
+        §5.5 Semantic search<br>
+        §3.4 Minimap scrub
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/30 shadow-2xl shadow-black/40">
+      <!-- top bar -->
+      <div class="border-b border-zinc-800 px-4 py-2.5 flex items-center justify-between bg-zinc-950/50">
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 text-xs text-zinc-400">
+            <button class="w-7 h-7 rounded bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center">◀</button>
+            <button class="w-7 h-7 rounded bg-orange-500/80 hover:bg-orange-500 flex items-center justify-center text-zinc-950 font-medium">▶</button>
+            <button class="w-7 h-7 rounded bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center">▶</button>
+          </div>
+          <div class="text-xs text-zinc-500 ml-2 font-mono">12:47:23</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" placeholder="when I was frustrated with the build…" class="bg-zinc-900 border border-zinc-800 rounded px-3 py-1.5 text-xs text-zinc-300 placeholder:text-zinc-600 w-80 focus:border-orange-500/50 focus:outline-none" />
+          <div class="text-[11px] text-zinc-600 font-mono">semantic</div>
+        </div>
+      </div>
+
+      <!-- scrubber region -->
+      <div class="px-4 pt-4 pb-2 bg-zinc-950/30">
+        <!-- thumbnail strip -->
+        <div class="relative flex gap-0.5 mb-2">
+          <div class="flex-1 h-14 rounded bg-gradient-to-br from-blue-500/20 to-blue-500/10 border border-zinc-800 flex items-center justify-center text-[10px] text-zinc-600">09:00</div>
+          <div class="flex-1 h-14 rounded bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 border border-zinc-800 flex items-center justify-center text-[10px] text-zinc-600">10:00</div>
+          <div class="flex-1 h-14 rounded bg-gradient-to-br from-blue-500/30 to-blue-500/10 border border-zinc-800 flex items-center justify-center text-[10px] text-zinc-600">11:00</div>
+          <div class="flex-1 h-14 rounded bg-gradient-to-br from-purple-500/20 to-purple-500/10 border border-zinc-800 flex items-center justify-center text-[10px] text-zinc-600">11:30</div>
+          <div class="flex-1 h-14 rounded bg-gradient-to-br from-pink-500/20 to-pink-500/10 border border-zinc-800 flex items-center justify-center text-[10px] text-zinc-600">12:00</div>
+          <div class="flex-1 h-14 rounded bg-gradient-to-br from-blue-500/40 to-blue-500/20 border border-orange-500/50 flex items-center justify-center text-[10px] text-zinc-400 font-medium">12:30</div>
+          <div class="flex-1 h-14 rounded bg-gradient-to-br from-blue-500/30 to-blue-500/10 border border-zinc-800 flex items-center justify-center text-[10px] text-zinc-600">13:00</div>
+          <div class="flex-1 h-14 rounded bg-gradient-to-br from-zinc-500/10 to-zinc-500/5 border border-zinc-800 flex items-center justify-center text-[10px] text-zinc-700">—</div>
+        </div>
+        <!-- scrubber bar -->
+        <div class="relative h-10 bg-zinc-900 rounded border border-zinc-800 overflow-hidden">
+          <!-- hourly ticks -->
+          <div class="absolute inset-0 flex">
+            <div class="flex-1 border-r border-zinc-800/50"></div>
+            <div class="flex-1 border-r border-zinc-800/50"></div>
+            <div class="flex-1 border-r border-zinc-800/50"></div>
+            <div class="flex-1 border-r border-zinc-800/50"></div>
+            <div class="flex-1 border-r border-zinc-800/50"></div>
+            <div class="flex-1 border-r border-zinc-800/50"></div>
+            <div class="flex-1 border-r border-zinc-800/50"></div>
+            <div class="flex-1"></div>
+          </div>
+          <!-- activity blocks -->
+          <div class="absolute top-2 bottom-2 left-[2%] w-[10%] rounded bg-blue-500/50"></div>
+          <div class="absolute top-2 bottom-2 left-[14%] w-[8%] rounded bg-emerald-500/50"></div>
+          <div class="absolute top-2 bottom-2 left-[24%] w-[18%] rounded bg-blue-500/60"></div>
+          <div class="absolute top-2 bottom-2 left-[44%] w-[10%] rounded bg-purple-500/50"></div>
+          <div class="absolute top-2 bottom-2 left-[56%] w-[4%] rounded bg-pink-500/50"></div>
+          <div class="absolute top-2 bottom-2 left-[62%] w-[20%] rounded bg-blue-500/70"></div>
+          <!-- playhead -->
+          <div class="playhead" style="left: 67%;"></div>
+          <!-- labels -->
+          <div class="absolute bottom-0 left-0 right-0 flex text-[9px] text-zinc-600 font-mono px-1">
+            <div class="flex-1">9am</div>
+            <div class="flex-1">10</div>
+            <div class="flex-1">11</div>
+            <div class="flex-1">12p</div>
+            <div class="flex-1">1</div>
+            <div class="flex-1">2</div>
+            <div class="flex-1">3</div>
+            <div class="flex-1">4</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- gallery -->
+      <div class="grid grid-cols-5 gap-0.5 p-0.5 bg-zinc-950">
+        <!-- 15 thumbnail cells -->
+        <div class="aspect-video bg-gradient-to-br from-blue-900/50 to-blue-950 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:15</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">🎨</div>
+        </div>
+        <div class="aspect-video bg-gradient-to-br from-pink-900/50 to-pink-950 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:22</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">💬</div>
+        </div>
+        <div class="aspect-video bg-gradient-to-br from-blue-900/60 to-blue-950 relative group cursor-pointer border-2 border-orange-400">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-200 font-mono bg-orange-500 px-1 rounded font-medium">12:31</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-400">⌨</div>
+        </div>
+        <div class="aspect-video bg-gradient-to-br from-emerald-900/50 to-emerald-950 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:38</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">🌐</div>
+        </div>
+        <div class="aspect-video bg-gradient-to-br from-zinc-800 to-zinc-900 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:42</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">⌘</div>
+        </div>
+
+        <div class="aspect-video bg-gradient-to-br from-blue-900/40 to-blue-950 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:47</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">⌨</div>
+        </div>
+        <div class="aspect-video bg-gradient-to-br from-blue-900/50 to-blue-950 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:53</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">⌨</div>
+        </div>
+        <div class="aspect-video bg-gradient-to-br from-emerald-900/40 to-emerald-950 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:58</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">🌐</div>
+        </div>
+        <div class="aspect-video bg-gradient-to-br from-purple-900/50 to-purple-950 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">13:04</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">🎨</div>
+        </div>
+        <div class="aspect-video bg-gradient-to-br from-purple-900/50 to-purple-950 relative group cursor-pointer">
+          <div class="absolute bottom-1 left-1 text-[10px] text-zinc-400 font-mono bg-black/60 px-1 rounded">13:11</div>
+          <div class="absolute top-1 right-1 text-[10px] text-zinc-500">🎨</div>
+        </div>
+      </div>
+
+      <!-- selected moment detail strip -->
+      <div class="border-t border-zinc-800 px-4 py-3 flex items-center gap-4 bg-zinc-950">
+        <div class="w-10 h-10 rounded bg-blue-500/20 flex items-center justify-center text-sm">⌨</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm text-zinc-100">Clipboard capture · <span class="font-mono text-orange-300 text-[12px]">"horizontal scrubber"</span></div>
+          <div class="text-[11px] text-zinc-500 mt-0.5">VS Code · 12:31 PM · session "coding" · 3 similar captures in last hour</div>
+        </div>
+        <button class="text-[11px] text-zinc-400 hover:text-zinc-100 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded">Pin to column →</button>
+      </div>
+    </div>
+
+    <div class="text-xs text-zinc-500 italic max-w-2xl">Failure mode: scrubber dragging feels great on trackpad, horrible on mouse. Ship with both scrubber drag and keyboard ← → arrow scrubbing from day one.</div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- COMBO C — Apple Photos style -->
+  <!-- ======================================================================== -->
+  <section id="combo-c" class="space-y-5">
+    <div class="flex items-baseline justify-between flex-wrap gap-3">
+      <div>
+        <div class="text-[11px] text-orange-400/80 uppercase tracking-widest mb-1.5">Combo C · High effort · Iconic if nailed</div>
+        <h2 class="text-2xl font-medium tracking-tight text-zinc-50">Apple Photos for your activity</h2>
+        <p class="text-zinc-400 text-sm mt-1.5 max-w-xl">Semantic zoom. One interface, three visual grammars — year, day, minute. Pinch to traverse.</p>
+      </div>
+      <div class="text-[11px] text-zinc-500 text-right leading-relaxed">
+        §1.7 Semantic zoom · §2.4 Summarization<br>
+        §1.4 Heatmap at year-level<br>
+        §2.6 Gallery at hour-level
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <!-- YEAR level -->
+      <div class="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/30 shadow-xl shadow-black/40">
+        <div class="border-b border-zinc-800 px-3 py-2 flex items-center justify-between bg-zinc-950/50">
+          <div class="text-[11px] text-zinc-400 font-medium">YEAR · 2026</div>
+          <div class="text-[10px] text-zinc-600 font-mono">⌘+scroll to zoom</div>
+        </div>
+        <div class="p-4 h-[460px] flex flex-col">
+          <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-3">Contribution heatmap</div>
+          <!-- heatmap -->
+          <div class="grid grid-cols-[repeat(13,1fr)] gap-[2px] mb-5">
+            <template id="hcell"></template>
+            <!-- 7 rows * 13 cols = 91 cells, sampled colors -->
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-1 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-4 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-1 rounded-[2px]"></div>
+            <div class="aspect-square heat-5 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+
+            <div class="aspect-square heat-1 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-4 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-1 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+            <div class="aspect-square heat-4 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-1 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-4 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-5 rounded-[2px]"></div>
+            <div class="aspect-square heat-4 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-4 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-5 rounded-[2px] ring-2 ring-orange-400"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-1 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-4 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+            <div class="aspect-square heat-2 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-1 rounded-[2px]"></div>
+            <div class="aspect-square heat-3 rounded-[2px]"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+            <div class="aspect-square heat-0 rounded-[2px]"></div>
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-2">This year</div>
+            <div class="text-xs text-zinc-400">🔥 847 coding sessions</div>
+            <div class="text-xs text-zinc-400">📸 12,441 screenshots</div>
+            <div class="text-xs text-zinc-400">📋 3,882 clipboard captures</div>
+            <div class="text-xs text-zinc-400">⚡ Peak week: Mar 16–22</div>
+          </div>
+          <div class="pt-3 border-t border-zinc-800 text-[10px] text-zinc-600 text-center">
+            ↓ click any cell to zoom to day
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY level -->
+      <div class="rounded-xl border border-orange-500/40 overflow-hidden bg-zinc-900/30 shadow-xl shadow-orange-500/5">
+        <div class="border-b border-zinc-800 px-3 py-2 flex items-center justify-between bg-orange-500/5">
+          <div class="text-[11px] text-orange-400 font-medium">DAY · April 21</div>
+          <div class="text-[10px] text-zinc-600 font-mono">focused</div>
+        </div>
+        <div class="p-4 h-[460px] flex flex-col">
+          <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-3">Hour summaries</div>
+          <div class="space-y-2 flex-1 overflow-y-auto scrollbar-thin -mx-1 px-1">
+            <!-- hour card -->
+            <div class="bg-zinc-900/70 border border-zinc-800 rounded p-2.5 hover:border-zinc-700 cursor-pointer">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="text-[11px] text-zinc-400 font-mono">12 PM</div>
+                <div class="flex gap-0.5">
+                  <div class="w-1.5 h-1.5 rounded-sm bg-blue-400"></div>
+                  <div class="w-1.5 h-1.5 rounded-sm bg-emerald-400"></div>
+                  <div class="w-1.5 h-1.5 rounded-sm bg-purple-400"></div>
+                </div>
+              </div>
+              <div class="text-[12px] text-zinc-200 leading-snug">Coded scrubber component, checked Rewind for reference, brief Slack with Ayesha about lunch.</div>
+            </div>
+            <div class="bg-zinc-900/70 border border-zinc-800 rounded p-2.5 hover:border-zinc-700 cursor-pointer">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="text-[11px] text-zinc-400 font-mono">11 AM</div>
+                <div class="flex gap-0.5">
+                  <div class="w-1.5 h-1.5 rounded-sm bg-blue-400"></div>
+                  <div class="w-1.5 h-1.5 rounded-sm bg-blue-400"></div>
+                </div>
+              </div>
+              <div class="text-[12px] text-zinc-200 leading-snug">Deep coding session. Built the pattern catalog skill. No context switches.</div>
+            </div>
+            <div class="bg-zinc-900/70 border border-zinc-800 rounded p-2.5 hover:border-zinc-700 cursor-pointer">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="text-[11px] text-zinc-400 font-mono">10 AM</div>
+                <div class="flex gap-0.5">
+                  <div class="w-1.5 h-1.5 rounded-sm bg-emerald-400"></div>
+                  <div class="w-1.5 h-1.5 rounded-sm bg-emerald-400"></div>
+                  <div class="w-1.5 h-1.5 rounded-sm bg-purple-400"></div>
+                </div>
+              </div>
+              <div class="text-[12px] text-zinc-300 leading-snug">Research: Apple Photos patterns, Rewind.ai design, Linear activity feeds.</div>
+            </div>
+            <div class="bg-zinc-900/70 border border-zinc-800 rounded p-2.5 hover:border-zinc-700 cursor-pointer">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="text-[11px] text-zinc-400 font-mono">9 AM</div>
+                <div class="flex gap-0.5">
+                  <div class="w-1.5 h-1.5 rounded-sm bg-orange-400"></div>
+                  <div class="w-1.5 h-1.5 rounded-sm bg-zinc-600"></div>
+                </div>
+              </div>
+              <div class="text-[12px] text-zinc-300 leading-snug">Morning journaling. Gita reading. Review of yesterday's commits.</div>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-zinc-800 text-[10px] text-zinc-600 text-center mt-3">
+            ↓ click hour to zoom to minute
+          </div>
+        </div>
+      </div>
+
+      <!-- MINUTE level -->
+      <div class="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/30 shadow-xl shadow-black/40">
+        <div class="border-b border-zinc-800 px-3 py-2 flex items-center justify-between bg-zinc-950/50">
+          <div class="text-[11px] text-zinc-400 font-medium">MINUTE · 12:30–12:50</div>
+          <div class="text-[10px] text-zinc-600 font-mono">20 min</div>
+        </div>
+        <div class="h-[460px] overflow-y-auto scrollbar-thin">
+          <div class="grid grid-cols-2 gap-0.5 p-0.5">
+            <div class="aspect-video bg-gradient-to-br from-blue-900/50 to-blue-950 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:31</div></div>
+            <div class="aspect-video bg-gradient-to-br from-emerald-900/50 to-emerald-950 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:33</div></div>
+            <div class="aspect-video bg-gradient-to-br from-blue-900/60 to-blue-950 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:35</div></div>
+            <div class="aspect-video bg-gradient-to-br from-blue-900/40 to-blue-950 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:37</div></div>
+            <div class="aspect-video bg-gradient-to-br from-emerald-900/50 to-emerald-950 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:39</div></div>
+            <div class="aspect-video bg-gradient-to-br from-blue-900/50 to-blue-950 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:41</div></div>
+            <div class="aspect-video bg-gradient-to-br from-zinc-800 to-zinc-900 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:43</div></div>
+            <div class="aspect-video bg-gradient-to-br from-blue-900/60 to-blue-950 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:45</div></div>
+            <div class="aspect-video bg-gradient-to-br from-blue-900/60 to-blue-950 relative border-2 border-orange-400"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-200 font-mono bg-orange-500 px-1 rounded">12:47</div></div>
+            <div class="aspect-video bg-gradient-to-br from-blue-900/50 to-blue-950 relative"><div class="absolute bottom-1 left-1 text-[9px] text-zinc-400 font-mono bg-black/60 px-1 rounded">12:49</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-xs text-zinc-500 italic max-w-2xl">Failure mode: transitions between zoom levels have to be instant and spatially coherent (like Apple Photos). If the zoom stutters or rearranges content, the illusion breaks.</div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- COMBO D — DevTools for yourself -->
+  <!-- ======================================================================== -->
+  <section id="combo-d" class="space-y-5">
+    <div class="flex items-baseline justify-between flex-wrap gap-3">
+      <div>
+        <div class="text-[11px] text-orange-400/80 uppercase tracking-widest mb-1.5">Combo D · Medium effort · Engineering aesthetic</div>
+        <h2 class="text-2xl font-medium tracking-tight text-zinc-50">DevTools for yourself</h2>
+        <p class="text-zinc-400 text-sm mt-1.5 max-w-xl">Swim lanes, one per app. Horizontal time axis. Drag to zoom a range. For pattern-finding and self-audit.</p>
+      </div>
+      <div class="text-[11px] text-zinc-500 text-right leading-relaxed">
+        §1.6 Swim lanes · §5.4 Time brush<br>
+        §3.7 Time chips · §4.3 Modal detail
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/30 shadow-2xl shadow-black/40">
+      <!-- toolbar -->
+      <div class="border-b border-zinc-800 px-4 py-2.5 flex items-center justify-between bg-zinc-950/50">
+        <div class="flex items-center gap-1 text-[11px]">
+          <button class="bg-zinc-900 hover:bg-zinc-800 text-zinc-400 px-2.5 py-1 rounded border border-zinc-800">Today</button>
+          <button class="bg-orange-500/15 text-orange-300 px-2.5 py-1 rounded border border-orange-500/30">Last 24h</button>
+          <button class="bg-zinc-900 hover:bg-zinc-800 text-zinc-400 px-2.5 py-1 rounded border border-zinc-800">This week</button>
+          <button class="bg-zinc-900 hover:bg-zinc-800 text-zinc-400 px-2.5 py-1 rounded border border-zinc-800">Custom</button>
+        </div>
+        <div class="text-[11px] text-zinc-500 flex items-center gap-3">
+          <span class="text-zinc-400">7 lanes</span>
+          <span class="text-zinc-700">·</span>
+          <span>drag to select range</span>
+        </div>
+      </div>
+
+      <!-- time axis -->
+      <div class="h-8 relative border-b border-zinc-800 bg-zinc-950/50">
+        <div class="absolute inset-0 flex text-[9px] text-zinc-600 font-mono">
+          <div class="flex-1 border-r border-zinc-800 px-2 py-2">9a</div>
+          <div class="flex-1 border-r border-zinc-800 px-2 py-2">10</div>
+          <div class="flex-1 border-r border-zinc-800 px-2 py-2">11</div>
+          <div class="flex-1 border-r border-zinc-800 px-2 py-2">12p</div>
+          <div class="flex-1 border-r border-zinc-800 px-2 py-2">1</div>
+          <div class="flex-1 border-r border-zinc-800 px-2 py-2">2</div>
+          <div class="flex-1 border-r border-zinc-800 px-2 py-2">3</div>
+          <div class="flex-1 px-2 py-2">4</div>
+        </div>
+        <!-- range selection -->
+        <div class="absolute top-0 bottom-0 bg-orange-500/10 border-x border-orange-400/50" style="left: 44%; width: 20%;">
+          <div class="absolute -top-0 -left-px h-full w-px bg-orange-400"></div>
+          <div class="absolute -top-0 -right-px h-full w-px bg-orange-400"></div>
+        </div>
+      </div>
+
+      <!-- lanes -->
+      <div class="divide-y divide-zinc-800/70 bg-zinc-950/20">
+        <!-- lane: VS Code -->
+        <div class="grid grid-cols-[120px_1fr] hover:bg-zinc-900/20">
+          <div class="px-3 py-2 flex items-center gap-2 border-r border-zinc-800/70">
+            <div class="w-2 h-2 rounded-sm bg-blue-400"></div>
+            <div class="text-xs text-zinc-300">VS Code</div>
+            <div class="text-[10px] text-zinc-600 ml-auto font-mono">2h 14m</div>
+          </div>
+          <div class="relative h-10">
+            <div class="lane-block bg-blue-500/40 border border-blue-400/50" style="left: 2%; width: 8%;"></div>
+            <div class="lane-block bg-blue-500/50 border border-blue-400/50" style="left: 14%; width: 4%;"></div>
+            <div class="lane-block bg-blue-500/60 border border-blue-400/60" style="left: 30%; width: 12%;"></div>
+            <div class="lane-block bg-blue-500/70 border border-blue-400/70 ring-1 ring-orange-400/50" style="left: 48%; width: 18%;"></div>
+            <div class="lane-block bg-blue-500/50 border border-blue-400/50" style="left: 68%; width: 8%;"></div>
+          </div>
+        </div>
+        <!-- lane: Chrome -->
+        <div class="grid grid-cols-[120px_1fr] hover:bg-zinc-900/20">
+          <div class="px-3 py-2 flex items-center gap-2 border-r border-zinc-800/70">
+            <div class="w-2 h-2 rounded-sm bg-emerald-400"></div>
+            <div class="text-xs text-zinc-300">Chrome</div>
+            <div class="text-[10px] text-zinc-600 ml-auto font-mono">52m</div>
+          </div>
+          <div class="relative h-10">
+            <div class="lane-block bg-emerald-500/40 border border-emerald-400/50" style="left: 12%; width: 3%;"></div>
+            <div class="lane-block bg-emerald-500/50 border border-emerald-400/50" style="left: 22%; width: 8%;"></div>
+            <div class="lane-block bg-emerald-500/60 border border-emerald-400/60" style="left: 54%; width: 3%;"></div>
+            <div class="lane-block bg-emerald-500/40 border border-emerald-400/50" style="left: 60%; width: 2%;"></div>
+          </div>
+        </div>
+        <!-- lane: Terminal -->
+        <div class="grid grid-cols-[120px_1fr] hover:bg-zinc-900/20">
+          <div class="px-3 py-2 flex items-center gap-2 border-r border-zinc-800/70">
+            <div class="w-2 h-2 rounded-sm bg-zinc-400"></div>
+            <div class="text-xs text-zinc-300">Terminal</div>
+            <div class="text-[10px] text-zinc-600 ml-auto font-mono">18m</div>
+          </div>
+          <div class="relative h-10">
+            <div class="lane-block bg-zinc-500/40 border border-zinc-400/50" style="left: 10%; width: 1.5%;"></div>
+            <div class="lane-block bg-zinc-500/50 border border-zinc-400/50" style="left: 28%; width: 1%;"></div>
+            <div class="lane-block bg-zinc-500/50 border border-zinc-400/50" style="left: 42%; width: 1.5%;"></div>
+            <div class="lane-block bg-zinc-500/60 border border-zinc-400/60" style="left: 55%; width: 2%;"></div>
+            <div class="lane-block bg-zinc-500/50 border border-zinc-400/50" style="left: 66%; width: 1%;"></div>
+          </div>
+        </div>
+        <!-- lane: Figma -->
+        <div class="grid grid-cols-[120px_1fr] hover:bg-zinc-900/20">
+          <div class="px-3 py-2 flex items-center gap-2 border-r border-zinc-800/70">
+            <div class="w-2 h-2 rounded-sm bg-purple-400"></div>
+            <div class="text-xs text-zinc-300">Figma</div>
+            <div class="text-[10px] text-zinc-600 ml-auto font-mono">34m</div>
+          </div>
+          <div class="relative h-10">
+            <div class="lane-block bg-purple-500/50 border border-purple-400/50" style="left: 46%; width: 6%;"></div>
+            <div class="lane-block bg-purple-500/60 border border-purple-400/60" style="left: 58%; width: 4%;"></div>
+          </div>
+        </div>
+        <!-- lane: Slack -->
+        <div class="grid grid-cols-[120px_1fr] hover:bg-zinc-900/20">
+          <div class="px-3 py-2 flex items-center gap-2 border-r border-zinc-800/70">
+            <div class="w-2 h-2 rounded-sm bg-pink-400"></div>
+            <div class="text-xs text-zinc-300">Slack</div>
+            <div class="text-[10px] text-zinc-600 ml-auto font-mono">8m</div>
+          </div>
+          <div class="relative h-10">
+            <div class="lane-block bg-pink-500/50 border border-pink-400/50" style="left: 44%; width: 2%;"></div>
+            <div class="lane-block bg-pink-500/40 border border-pink-400/50" style="left: 52%; width: 1.5%;"></div>
+          </div>
+        </div>
+        <!-- lane: Arc -->
+        <div class="grid grid-cols-[120px_1fr] hover:bg-zinc-900/20">
+          <div class="px-3 py-2 flex items-center gap-2 border-r border-zinc-800/70">
+            <div class="w-2 h-2 rounded-sm bg-orange-400"></div>
+            <div class="text-xs text-zinc-300">Arc</div>
+            <div class="text-[10px] text-zinc-600 ml-auto font-mono">22m</div>
+          </div>
+          <div class="relative h-10">
+            <div class="lane-block bg-orange-500/50 border border-orange-400/50" style="left: 2%; width: 6%;"></div>
+            <div class="lane-block bg-orange-500/40 border border-orange-400/50" style="left: 72%; width: 3%;"></div>
+          </div>
+        </div>
+        <!-- lane: Clipboard -->
+        <div class="grid grid-cols-[120px_1fr] hover:bg-zinc-900/20">
+          <div class="px-3 py-2 flex items-center gap-2 border-r border-zinc-800/70">
+            <div class="w-2 h-2 rounded-sm bg-yellow-400"></div>
+            <div class="text-xs text-zinc-300">Clipboard</div>
+            <div class="text-[10px] text-zinc-600 ml-auto font-mono">47 caps</div>
+          </div>
+          <div class="relative h-10">
+            <!-- dots instead of blocks -->
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 5%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 14%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 22%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 34%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 41%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-yellow-400" style="left: 49%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 53%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 58%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 64%;"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-yellow-400" style="left: 70%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- range summary footer -->
+      <div class="border-t border-zinc-800 px-4 py-3 bg-orange-500/5 flex items-center justify-between">
+        <div class="text-xs">
+          <span class="text-orange-400 font-medium">Selected range: 12:00–1:50</span>
+          <span class="text-zinc-500 ml-3">64 events · 5 lanes · focus 0.81</span>
+        </div>
+        <div class="flex gap-2">
+          <button class="text-[11px] text-zinc-300 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded">Zoom to range</button>
+          <button class="text-[11px] text-zinc-950 bg-orange-400 hover:bg-orange-300 px-3 py-1.5 rounded font-medium">Summarize</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-xs text-zinc-500 italic max-w-2xl">Failure mode: more than ~7 lanes becomes unreadable. Auto-group tail apps into "other" lane, or pin favorites.</div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- COMBO E — Daily review ritual -->
+  <!-- ======================================================================== -->
+  <section id="combo-e" class="space-y-5">
+    <div class="flex items-baseline justify-between flex-wrap gap-3">
+      <div>
+        <div class="text-[11px] text-orange-400/80 uppercase tracking-widest mb-1.5">Combo E · Medium effort · Narrow but deep</div>
+        <h2 class="text-2xl font-medium tracking-tight text-zinc-50">Daily review ritual</h2>
+        <p class="text-zinc-400 text-sm mt-1.5 max-w-xl">Story-style replay. Auto-advances through your day. Pause to annotate. Ends with a journal draft.</p>
+      </div>
+      <div class="text-[11px] text-zinc-500 text-right leading-relaxed">
+        §3.6 Playback · §6.7 Replay mode<br>
+        §2.4 Summarization · §6.5 Annotation
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-zinc-800 overflow-hidden bg-gradient-to-b from-zinc-900 to-zinc-950 shadow-2xl shadow-black/40">
+      <!-- story progress -->
+      <div class="flex gap-1 p-3 pb-2">
+        <div class="flex-1 h-0.5 rounded-full bg-zinc-100/80"></div>
+        <div class="flex-1 h-0.5 rounded-full bg-zinc-100/80"></div>
+        <div class="flex-1 h-0.5 rounded-full bg-zinc-100/80"></div>
+        <div class="flex-1 h-0.5 rounded-full bg-gradient-to-r from-zinc-100/80 to-zinc-100/10"></div>
+        <div class="flex-1 h-0.5 rounded-full bg-zinc-700"></div>
+        <div class="flex-1 h-0.5 rounded-full bg-zinc-700"></div>
+        <div class="flex-1 h-0.5 rounded-full bg-zinc-700"></div>
+        <div class="flex-1 h-0.5 rounded-full bg-zinc-700"></div>
+      </div>
+
+      <!-- story content -->
+      <div class="grid grid-cols-[1fr_320px] h-[480px]">
+        <!-- main moment -->
+        <div class="relative p-8 flex flex-col justify-between bg-gradient-to-br from-blue-950/40 to-zinc-950">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-xs text-zinc-400">
+              <div class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></div>
+              <span>Replay · April 21</span>
+              <span class="text-zinc-600">·</span>
+              <span class="font-mono">11:47 AM</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <button class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center">⏸</button>
+              <button class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-xs">2×</button>
+            </div>
+          </div>
+
+          <div class="max-w-lg">
+            <div class="text-[11px] text-orange-400/80 uppercase tracking-widest mb-3">Moment 4 of 8</div>
+            <h3 class="text-3xl font-medium tracking-tight text-zinc-50 mb-4 leading-tight">You hit a flow state around 11:15.</h3>
+            <p class="text-zinc-300 text-base leading-relaxed mb-4">For 90 minutes you didn't switch away from VS Code. Focus score peaked at 0.91. You committed twice, both messages mentioning "scrubber."</p>
+            <div class="flex items-center gap-4 text-xs text-zinc-500">
+              <div>
+                <div class="text-zinc-400 font-medium text-sm">1h 32m</div>
+                <div>uninterrupted</div>
+              </div>
+              <div class="w-px h-8 bg-zinc-800"></div>
+              <div>
+                <div class="text-zinc-400 font-medium text-sm">0 switches</div>
+                <div>in session</div>
+              </div>
+              <div class="w-px h-8 bg-zinc-800"></div>
+              <div>
+                <div class="text-zinc-400 font-medium text-sm">2 commits</div>
+                <div>pushed</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <button class="text-xs text-zinc-500 hover:text-zinc-300 flex items-center gap-1.5">
+              <span>✎</span> Annotate this moment
+            </button>
+            <div class="flex items-center gap-2 text-xs text-zinc-500">
+              <kbd class="bg-zinc-900 border border-zinc-800 rounded px-1.5 py-0.5 text-[10px] font-mono">←</kbd>
+              <span>prev</span>
+              <span class="text-zinc-700">·</span>
+              <kbd class="bg-zinc-900 border border-zinc-800 rounded px-1.5 py-0.5 text-[10px] font-mono">→</kbd>
+              <span>next</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- right sidebar: journal draft -->
+        <div class="border-l border-zinc-800 bg-zinc-950/50 flex flex-col">
+          <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+            <div class="text-[11px] text-zinc-400 font-medium uppercase tracking-wider">Journal draft</div>
+            <div class="text-[10px] text-zinc-600 font-mono">auto-generating</div>
+          </div>
+          <div class="flex-1 p-4 overflow-y-auto scrollbar-thin space-y-3 text-sm text-zinc-300 leading-relaxed">
+            <p><span class="text-zinc-500">Today, April 21.</span></p>
+            <p>Started with research on timeline UX patterns. Picked up steam around 10:15 reading about Apple Photos' semantic zoom.</p>
+            <p>The <em class="text-orange-300 not-italic">big thing</em> was the 11:15 flow state — 90 unbroken minutes on the scrubber. Two commits, no context switches, focus at 0.91. That's your second-best focus block this week.</p>
+            <p class="text-zinc-500">Lunch break at 12:01 · Slack w/ Ayesha…</p>
+            <p class="text-zinc-700 italic text-xs">continuing…</p>
+          </div>
+          <div class="border-t border-zinc-800 px-4 py-3 flex items-center justify-between">
+            <button class="text-[11px] text-zinc-400 hover:text-zinc-200">Regenerate</button>
+            <button class="text-[11px] text-zinc-950 bg-orange-400 hover:bg-orange-300 px-3 py-1.5 rounded font-medium">Save to Day One</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-xs text-zinc-500 italic max-w-2xl">Failure mode: "ritual" products die when the trigger is unclear. Ship this as a scheduled 6pm notification, not a UI you have to remember to visit.</div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- COMBO F — Three Questions -->
+  <!-- ======================================================================== -->
+  <section id="combo-f" class="space-y-5">
+    <div class="flex items-baseline justify-between flex-wrap gap-3">
+      <div>
+        <div class="text-[11px] text-orange-400/80 uppercase tracking-widest mb-1.5">Combo F · Medium effort · Structural clarity</div>
+        <h2 class="text-2xl font-medium tracking-tight text-zinc-50">Three Questions</h2>
+        <p class="text-zinc-400 text-sm mt-1.5 max-w-xl">Three tabs, one per recall intent. Today = "what just happened," Then = "when did I," Patterns = "what's my rhythm."</p>
+      </div>
+      <div class="text-[11px] text-zinc-500 text-right leading-relaxed">
+        §6.1 Three Questions · §6.2 Today/Then/Patterns<br>
+        Each tab = a different combo
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/30 shadow-2xl shadow-black/40">
+      <!-- tabs -->
+      <div class="flex border-b border-zinc-800 bg-zinc-950/50">
+        <button data-tab-btn="today" class="active px-5 py-3 text-sm text-zinc-400 transition border-r border-zinc-800">
+          <div class="font-medium">Today</div>
+          <div class="text-[10px] text-zinc-500 mt-0.5">What just happened</div>
+        </button>
+        <button data-tab-btn="then" class="px-5 py-3 text-sm text-zinc-400 transition border-r border-zinc-800 hover:bg-zinc-900/50">
+          <div class="font-medium">Then</div>
+          <div class="text-[10px] text-zinc-500 mt-0.5">When did I</div>
+        </button>
+        <button data-tab-btn="patterns" class="px-5 py-3 text-sm text-zinc-400 transition border-r border-zinc-800 hover:bg-zinc-900/50">
+          <div class="font-medium">Patterns</div>
+          <div class="text-[10px] text-zinc-500 mt-0.5">What's my rhythm</div>
+        </button>
+        <div class="flex-1 flex items-center justify-end px-4 text-[11px] text-zinc-600">
+          <kbd class="bg-zinc-900 border border-zinc-800 rounded px-1.5 py-0.5 font-mono">1</kbd>
+          <kbd class="bg-zinc-900 border border-zinc-800 rounded px-1.5 py-0.5 font-mono ml-1">2</kbd>
+          <kbd class="bg-zinc-900 border border-zinc-800 rounded px-1.5 py-0.5 font-mono ml-1">3</kbd>
+          <span class="ml-2">switch tab</span>
+        </div>
+      </div>
+
+      <!-- TODAY pane -->
+      <div data-tab-pane="today" class="active">
+        <div class="p-4 grid grid-cols-[240px_1fr] h-[480px] gap-4">
+          <!-- now strip -->
+          <div class="space-y-3">
+            <div class="bg-gradient-to-br from-orange-500/10 to-zinc-900 border border-orange-500/20 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></div>
+                <div class="text-[11px] text-orange-400 uppercase tracking-wider font-medium">Now</div>
+              </div>
+              <div class="text-sm text-zinc-200 mb-3">VS Code · <span class="text-orange-300 font-mono text-[12px]">page.tsx</span></div>
+              <div class="space-y-1.5 text-[11px] text-zinc-500">
+                <div>session · 1h 32m</div>
+                <div>focus · 0.91</div>
+                <div>lane · coding</div>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <div class="text-[11px] text-zinc-500 uppercase tracking-wider">Today</div>
+              <div class="text-3xl font-medium text-zinc-100">3<span class="text-zinc-600">h</span> 42<span class="text-zinc-600">m</span></div>
+              <div class="text-[11px] text-zinc-500">147 events · 4 sessions · 0.72 avg focus</div>
+            </div>
+          </div>
+          <!-- feed preview -->
+          <div class="border border-zinc-800 rounded-lg overflow-hidden">
+            <div class="bg-zinc-950/50 border-b border-zinc-800 px-3 py-2 text-[11px] text-zinc-500 uppercase tracking-wider">Recent</div>
+            <div class="divide-y divide-zinc-800/50 text-sm">
+              <div class="px-3 py-2 hover:bg-zinc-900/30 flex items-center gap-3">
+                <div class="text-[10px] text-zinc-600 font-mono w-10">12:47</div>
+                <div class="w-5 h-5 rounded bg-blue-500/20 flex items-center justify-center text-[10px]">⌨</div>
+                <div class="flex-1 truncate text-zinc-300">Editing page.tsx</div>
+              </div>
+              <div class="px-3 py-2 hover:bg-zinc-900/30 flex items-center gap-3">
+                <div class="text-[10px] text-zinc-600 font-mono w-10">12:42</div>
+                <div class="w-5 h-5 rounded bg-zinc-800 flex items-center justify-center text-[10px]">⌘</div>
+                <div class="flex-1 truncate text-zinc-300 font-mono text-[12px]">git commit scrubber v2</div>
+              </div>
+              <div class="px-3 py-2 hover:bg-zinc-900/30 flex items-center gap-3">
+                <div class="text-[10px] text-zinc-600 font-mono w-10">12:38</div>
+                <div class="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center text-[10px]">🌐</div>
+                <div class="flex-1 truncate text-zinc-300">rewind.ai · homepage</div>
+              </div>
+              <div class="px-3 py-2 hover:bg-zinc-900/30 flex items-center gap-3 text-zinc-500">
+                <div class="text-[10px] w-10 font-mono">12:31</div>
+                <div class="w-5 h-5 rounded bg-zinc-900 flex items-center justify-center text-[10px]">📋</div>
+                <div class="flex-1 truncate text-[12px]">8 clipboard captures</div>
+              </div>
+              <div class="px-3 py-2 hover:bg-zinc-900/30 flex items-center gap-3">
+                <div class="text-[10px] text-zinc-600 font-mono w-10">12:15</div>
+                <div class="w-5 h-5 rounded bg-purple-500/20 flex items-center justify-center text-[10px]">🎨</div>
+                <div class="flex-1 truncate text-zinc-300">Timeline mockup v3</div>
+              </div>
+              <div class="px-3 py-2 hover:bg-zinc-900/30 flex items-center gap-3">
+                <div class="text-[10px] text-zinc-600 font-mono w-10">12:01</div>
+                <div class="w-5 h-5 rounded bg-pink-500/20 flex items-center justify-center text-[10px]">💬</div>
+                <div class="flex-1 truncate text-zinc-300">@ayesha lunch at 1?</div>
+              </div>
+              <div class="px-3 py-2 hover:bg-zinc-900/30 flex items-center gap-3">
+                <div class="text-[10px] text-zinc-600 font-mono w-10">11:47</div>
+                <div class="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center text-[10px]">🌐</div>
+                <div class="flex-1 truncate text-zinc-300">Apple Photos · design patterns</div>
+              </div>
+              <div class="px-3 py-2 hover:bg-zinc-900/30 flex items-center gap-3">
+                <div class="text-[10px] text-zinc-600 font-mono w-10">11:30</div>
+                <div class="w-5 h-5 rounded bg-zinc-800 flex items-center justify-center text-[10px]">⌘</div>
+                <div class="flex-1 truncate text-zinc-300 font-mono text-[12px]">npm run dev</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THEN pane -->
+      <div data-tab-pane="then">
+        <div class="p-4 grid grid-cols-[280px_1fr] h-[480px] gap-4">
+          <!-- calendar -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="text-sm font-medium text-zinc-200">April 2026</div>
+              <div class="flex gap-1 text-zinc-500">
+                <button class="w-6 h-6 hover:bg-zinc-900 rounded flex items-center justify-center text-xs">←</button>
+                <button class="w-6 h-6 hover:bg-zinc-900 rounded flex items-center justify-center text-xs">→</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-7 gap-1 text-[10px] text-zinc-600 text-center">
+              <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+            </div>
+            <div class="grid grid-cols-7 gap-1 text-xs">
+              <div class="aspect-square rounded heat-0"></div>
+              <div class="aspect-square rounded heat-2 flex items-center justify-center text-zinc-500">1</div>
+              <div class="aspect-square rounded heat-3 flex items-center justify-center text-zinc-400">2</div>
+              <div class="aspect-square rounded heat-2 flex items-center justify-center text-zinc-500">3</div>
+              <div class="aspect-square rounded heat-4 flex items-center justify-center text-zinc-300">4</div>
+              <div class="aspect-square rounded heat-1 flex items-center justify-center text-zinc-600">5</div>
+              <div class="aspect-square rounded heat-0 flex items-center justify-center text-zinc-700">6</div>
+
+              <div class="aspect-square rounded heat-3 flex items-center justify-center text-zinc-400">7</div>
+              <div class="aspect-square rounded heat-2 flex items-center justify-center text-zinc-500">8</div>
+              <div class="aspect-square rounded heat-4 flex items-center justify-center text-zinc-300">9</div>
+              <div class="aspect-square rounded heat-5 flex items-center justify-center text-zinc-200">10</div>
+              <div class="aspect-square rounded heat-3 flex items-center justify-center text-zinc-400">11</div>
+              <div class="aspect-square rounded heat-1 flex items-center justify-center text-zinc-600">12</div>
+              <div class="aspect-square rounded heat-0 flex items-center justify-center text-zinc-700">13</div>
+
+              <div class="aspect-square rounded heat-2 flex items-center justify-center text-zinc-500">14</div>
+              <div class="aspect-square rounded heat-3 flex items-center justify-center text-zinc-400">15</div>
+              <div class="aspect-square rounded heat-4 flex items-center justify-center text-zinc-300">16</div>
+              <div class="aspect-square rounded heat-2 flex items-center justify-center text-zinc-500">17</div>
+              <div class="aspect-square rounded heat-5 flex items-center justify-center text-zinc-200">18</div>
+              <div class="aspect-square rounded heat-1 flex items-center justify-center text-zinc-600">19</div>
+              <div class="aspect-square rounded heat-0 flex items-center justify-center text-zinc-700">20</div>
+
+              <div class="aspect-square rounded ring-2 ring-orange-400 heat-5 flex items-center justify-center text-zinc-100 font-medium">21</div>
+              <div class="aspect-square rounded bg-zinc-900 flex items-center justify-center text-zinc-700 border border-dashed border-zinc-800">22</div>
+              <div class="aspect-square rounded bg-zinc-900 flex items-center justify-center text-zinc-700">23</div>
+              <div class="aspect-square rounded bg-zinc-900 flex items-center justify-center text-zinc-700">24</div>
+              <div class="aspect-square rounded bg-zinc-900 flex items-center justify-center text-zinc-700">25</div>
+              <div class="aspect-square rounded bg-zinc-900 flex items-center justify-center text-zinc-700">26</div>
+              <div class="aspect-square rounded bg-zinc-900 flex items-center justify-center text-zinc-700">27</div>
+            </div>
+            <div class="pt-3 border-t border-zinc-800">
+              <input type="text" placeholder="Jump to date or type…" class="w-full bg-zinc-900 border border-zinc-800 rounded px-2 py-1.5 text-xs text-zinc-300 placeholder:text-zinc-600" />
+            </div>
+          </div>
+          <!-- day detail -->
+          <div class="border border-zinc-800 rounded-lg overflow-hidden bg-zinc-950/40">
+            <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+              <div>
+                <div class="text-sm font-medium text-zinc-100">April 21 · Tuesday</div>
+                <div class="text-[11px] text-zinc-500">3h 42m · 4 sessions · focus 0.72</div>
+              </div>
+              <div class="flex gap-1">
+                <div class="h-1.5 w-8 rounded-full bg-blue-400"></div>
+                <div class="h-1.5 w-4 rounded-full bg-purple-400"></div>
+                <div class="h-1.5 w-3 rounded-full bg-emerald-400"></div>
+                <div class="h-1.5 w-1 rounded-full bg-pink-400"></div>
+              </div>
+            </div>
+            <div class="p-4 space-y-3">
+              <div class="text-[11px] text-zinc-500 uppercase tracking-wider">Day summary</div>
+              <p class="text-sm text-zinc-300 leading-relaxed">Deep coding morning on the timeline UI. Morning research on Apple Photos patterns led to 90-min flow state at 11:15. Two commits. Brief Slack around lunch.</p>
+              <div class="pt-2 border-t border-zinc-800 space-y-1.5">
+                <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-2">Highlights</div>
+                <div class="text-sm text-zinc-400">🔥 11:15–12:47 · flow state (0.91)</div>
+                <div class="text-sm text-zinc-400">💾 2 commits</div>
+                <div class="text-sm text-zinc-400">📸 47 screenshots captured</div>
+                <div class="text-sm text-zinc-400">📋 "horizontal scrubber" · 3× clipboard</div>
+              </div>
+              <button class="w-full mt-3 text-xs text-zinc-300 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 py-2 rounded">Open full day →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PATTERNS pane -->
+      <div data-tab-pane="patterns">
+        <div class="p-4 grid grid-cols-2 gap-4 h-[480px]">
+          <!-- hour heatmap -->
+          <div class="border border-zinc-800 rounded-lg p-4 bg-zinc-950/40">
+            <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-3">When do you focus?</div>
+            <div class="text-xs text-zinc-600 mb-2">Avg focus score by hour (last 30 days)</div>
+            <div class="grid grid-cols-8 gap-1">
+              <div class="aspect-square rounded heat-0"></div>
+              <div class="aspect-square rounded heat-0"></div>
+              <div class="aspect-square rounded heat-0"></div>
+              <div class="aspect-square rounded heat-0"></div>
+              <div class="aspect-square rounded heat-0"></div>
+              <div class="aspect-square rounded heat-1"></div>
+              <div class="aspect-square rounded heat-2"></div>
+              <div class="aspect-square rounded heat-3"></div>
+
+              <div class="aspect-square rounded heat-4 flex items-center justify-center text-[9px] text-orange-100">9a</div>
+              <div class="aspect-square rounded heat-4 flex items-center justify-center text-[9px] text-orange-100">10</div>
+              <div class="aspect-square rounded heat-5 flex items-center justify-center text-[9px] text-orange-50 font-medium">11</div>
+              <div class="aspect-square rounded heat-5 flex items-center justify-center text-[9px] text-orange-50 font-medium">12p</div>
+              <div class="aspect-square rounded heat-2"></div>
+              <div class="aspect-square rounded heat-3 flex items-center justify-center text-[9px] text-zinc-300">2</div>
+              <div class="aspect-square rounded heat-3 flex items-center justify-center text-[9px] text-zinc-300">3</div>
+              <div class="aspect-square rounded heat-2"></div>
+
+              <div class="aspect-square rounded heat-1"></div>
+              <div class="aspect-square rounded heat-2"></div>
+              <div class="aspect-square rounded heat-3 flex items-center justify-center text-[9px] text-zinc-300">7</div>
+              <div class="aspect-square rounded heat-2"></div>
+              <div class="aspect-square rounded heat-1"></div>
+              <div class="aspect-square rounded heat-0"></div>
+              <div class="aspect-square rounded heat-0"></div>
+              <div class="aspect-square rounded heat-0"></div>
+            </div>
+            <div class="mt-3 text-xs text-zinc-400">
+              <span class="text-orange-300">Peak: 11 AM – 12 PM</span> <span class="text-zinc-600">·</span> lunch dip at 1 · mini-peak at 7 PM
+            </div>
+          </div>
+
+          <!-- app breakdown -->
+          <div class="border border-zinc-800 rounded-lg p-4 bg-zinc-950/40">
+            <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-3">Where does time go?</div>
+            <div class="space-y-2.5">
+              <div>
+                <div class="flex items-center justify-between mb-1 text-xs"><span class="text-zinc-300">VS Code</span><span class="text-zinc-500 font-mono">42%</span></div>
+                <div class="h-1.5 rounded-full bg-zinc-900 overflow-hidden"><div class="h-full bg-blue-400 rounded-full" style="width: 42%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1 text-xs"><span class="text-zinc-300">Chrome</span><span class="text-zinc-500 font-mono">18%</span></div>
+                <div class="h-1.5 rounded-full bg-zinc-900 overflow-hidden"><div class="h-full bg-emerald-400 rounded-full" style="width: 18%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1 text-xs"><span class="text-zinc-300">Figma</span><span class="text-zinc-500 font-mono">14%</span></div>
+                <div class="h-1.5 rounded-full bg-zinc-900 overflow-hidden"><div class="h-full bg-purple-400 rounded-full" style="width: 14%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1 text-xs"><span class="text-zinc-300">Terminal</span><span class="text-zinc-500 font-mono">9%</span></div>
+                <div class="h-1.5 rounded-full bg-zinc-900 overflow-hidden"><div class="h-full bg-zinc-400 rounded-full" style="width: 9%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1 text-xs"><span class="text-zinc-300">Slack</span><span class="text-zinc-500 font-mono">6%</span></div>
+                <div class="h-1.5 rounded-full bg-zinc-900 overflow-hidden"><div class="h-full bg-pink-400 rounded-full" style="width: 6%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1 text-xs"><span class="text-zinc-500">other (12)</span><span class="text-zinc-500 font-mono">11%</span></div>
+                <div class="h-1.5 rounded-full bg-zinc-900 overflow-hidden"><div class="h-full bg-zinc-600 rounded-full" style="width: 11%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- streaks -->
+          <div class="border border-zinc-800 rounded-lg p-4 bg-zinc-950/40 col-span-2">
+            <div class="text-[11px] text-zinc-500 uppercase tracking-wider mb-3">Flow streaks — 30 day view</div>
+            <div class="flex items-end gap-1 h-24">
+              <div class="flex-1 rounded-t bg-blue-400/30" style="height: 40%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/40" style="height: 55%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/20" style="height: 30%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/50" style="height: 65%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/60" style="height: 70%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/30" style="height: 45%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/20" style="height: 15%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/40" style="height: 60%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/60" style="height: 75%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/70" style="height: 85%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/50" style="height: 62%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/20" style="height: 20%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/30" style="height: 35%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/60" style="height: 72%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/50" style="height: 60%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/80" style="height: 90%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/60" style="height: 70%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/40" style="height: 50%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/30" style="height: 40%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/70" style="height: 80%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/50" style="height: 65%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/60" style="height: 70%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/40" style="height: 55%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/30" style="height: 42%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/50" style="height: 60%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/70" style="height: 82%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/60" style="height: 70%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/50" style="height: 65%"></div>
+              <div class="flex-1 rounded-t bg-blue-400/60" style="height: 72%"></div>
+              <div class="flex-1 rounded-t bg-orange-400" style="height: 90%"></div>
+            </div>
+            <div class="mt-2 flex items-center justify-between text-[11px] text-zinc-500">
+              <span>30 days ago</span>
+              <span>today · longest: 1h 32m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-xs text-zinc-500 italic max-w-2xl">Failure mode: three tabs feels like three products. Keep the now-strip and palette shared across all tabs so it still feels like one app.</div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- COMBO G — Scrollytelling -->
+  <!-- ======================================================================== -->
+  <section id="combo-g" class="space-y-5">
+    <div class="flex items-baseline justify-between flex-wrap gap-3">
+      <div>
+        <div class="text-[11px] text-orange-400/80 uppercase tracking-widest mb-1.5">Combo G · Low-medium effort · Novel feel</div>
+        <h2 class="text-2xl font-medium tracking-tight text-zinc-50">Scrollytelling</h2>
+        <p class="text-zinc-400 text-sm mt-1.5 max-w-xl">Forward-chronological. Moments expand inline as they enter viewport. Chapter breaks between hours.</p>
+      </div>
+      <div class="text-[11px] text-zinc-500 text-right leading-relaxed">
+        §1.2 Chronological · §4.1 Inline expand<br>
+        §3.6 Auto-advance · Chapter cards
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/30 shadow-2xl shadow-black/40">
+      <div class="grid grid-cols-[1fr_320px] h-[640px]">
+        <!-- story column -->
+        <div class="overflow-y-auto scrollbar-thin p-8 space-y-6">
+          <!-- chapter -->
+          <div class="border-t border-zinc-800 pt-6 first:border-t-0 first:pt-0">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="text-[11px] text-zinc-500 uppercase tracking-widest font-medium">Chapter 1</div>
+              <div class="h-px flex-1 bg-zinc-800"></div>
+              <div class="text-[11px] text-zinc-500 font-mono">9:00 AM</div>
+            </div>
+            <h3 class="text-lg font-medium text-zinc-100 mb-2">Morning. Slow start.</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-4">You opened Arc, browsed two articles, then went to Day One for 14 minutes.</p>
+          </div>
+
+          <!-- moment compact -->
+          <div class="flex gap-4 items-start opacity-60 hover:opacity-100 transition">
+            <div class="text-[11px] text-zinc-500 font-mono w-12 mt-0.5 text-right">9:14</div>
+            <div class="w-2 h-2 rounded-full bg-zinc-600 mt-1.5 ring-2 ring-zinc-950"></div>
+            <div class="flex-1 text-sm text-zinc-400">Arc · reading "The Anxious Generation"</div>
+          </div>
+          <div class="flex gap-4 items-start opacity-60 hover:opacity-100 transition">
+            <div class="text-[11px] text-zinc-500 font-mono w-12 mt-0.5 text-right">9:45</div>
+            <div class="w-2 h-2 rounded-full bg-zinc-600 mt-1.5 ring-2 ring-zinc-950"></div>
+            <div class="flex-1 text-sm text-zinc-400">Day One · journal entry (14m)</div>
+          </div>
+
+          <!-- chapter -->
+          <div class="border-t border-zinc-800 pt-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="text-[11px] text-orange-400 uppercase tracking-widest font-medium">Chapter 2</div>
+              <div class="h-px flex-1 bg-orange-400/20"></div>
+              <div class="text-[11px] text-orange-400/80 font-mono">10:00 AM</div>
+            </div>
+            <h3 class="text-lg font-medium text-zinc-100 mb-2">Research mode.</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-4">You read 6 articles about timeline UX in 45 minutes. Clipped "semantic zoom" three times.</p>
+          </div>
+
+          <!-- moment expanded -->
+          <div class="flex gap-4 items-start">
+            <div class="text-[11px] text-zinc-400 font-mono w-12 mt-0.5 text-right">10:02</div>
+            <div class="w-2 h-2 rounded-full bg-emerald-400 mt-1.5 ring-2 ring-zinc-950"></div>
+            <div class="flex-1 bg-zinc-900/60 border border-zinc-800 rounded-lg p-4">
+              <div class="flex items-center gap-2 text-[11px] text-zinc-500 mb-2">
+                <span>🌐 Chrome</span>
+                <span class="text-zinc-700">·</span>
+                <span>apple.com/photos</span>
+              </div>
+              <div class="text-sm text-zinc-200 font-medium mb-3">Apple Photos semantic zoom documentation</div>
+              <div class="aspect-[16/7] rounded bg-gradient-to-br from-emerald-900/30 to-zinc-900 grid-bg"></div>
+              <div class="mt-3 text-[11px] text-zinc-500">You scrolled to the section on "pinch to zoom between year/month/day" twice.</div>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <div class="text-[11px] text-zinc-400 font-mono w-12 mt-0.5 text-right">10:18</div>
+            <div class="w-2 h-2 rounded-full bg-yellow-400 mt-1.5 ring-2 ring-zinc-950"></div>
+            <div class="flex-1 bg-zinc-900/60 border border-zinc-800 rounded-lg p-3">
+              <div class="flex items-center gap-2 text-[11px] text-zinc-500 mb-1">
+                <span>📋 Clipboard</span>
+                <span class="text-zinc-700">·</span>
+                <span>from Chrome</span>
+              </div>
+              <div class="text-xs text-orange-300 font-mono">"semantic zoom"</div>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start opacity-60">
+            <div class="text-[11px] text-zinc-500 font-mono w-12 mt-0.5 text-right">10:34</div>
+            <div class="w-2 h-2 rounded-full bg-zinc-600 mt-1.5 ring-2 ring-zinc-950"></div>
+            <div class="flex-1 text-sm text-zinc-400">Chrome · linear.app/activity</div>
+          </div>
+
+          <!-- chapter -->
+          <div class="border-t border-zinc-800 pt-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="text-[11px] text-orange-400 uppercase tracking-widest font-medium">Chapter 3</div>
+              <div class="h-px flex-1 bg-orange-400/30"></div>
+              <div class="text-[11px] text-orange-400 font-mono">11:15 AM · flow state →</div>
+            </div>
+            <h3 class="text-lg font-medium text-zinc-100 mb-2">Flow.</h3>
+            <p class="text-zinc-300 text-sm leading-relaxed">You opened VS Code and didn't look up for 92 minutes.</p>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <div class="text-[11px] text-zinc-400 font-mono w-12 mt-0.5 text-right">11:15</div>
+            <div class="w-2 h-2 rounded-full bg-blue-400 mt-1.5 ring-2 ring-zinc-950"></div>
+            <div class="flex-1 bg-blue-500/5 border border-blue-500/20 rounded-lg p-4">
+              <div class="flex items-center gap-2 text-[11px] text-blue-300/80 mb-2">
+                <span>⌨ VS Code</span>
+                <span class="text-zinc-700">·</span>
+                <span>new file</span>
+              </div>
+              <div class="text-sm text-zinc-200 font-mono">components/Scrubber.tsx</div>
+              <div class="mt-3 grid grid-cols-3 gap-1">
+                <div class="aspect-video rounded bg-blue-900/40"></div>
+                <div class="aspect-video rounded bg-blue-900/40"></div>
+                <div class="aspect-video rounded bg-blue-900/40"></div>
+              </div>
+              <div class="mt-3 text-[11px] text-zinc-400">3 screenshots · 0.91 focus · 12 clipboard captures, all code</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOC sidebar -->
+        <div class="border-l border-zinc-800 bg-zinc-950/50 flex flex-col">
+          <div class="px-4 py-3 border-b border-zinc-800">
+            <div class="text-[11px] text-zinc-400 uppercase tracking-wider font-medium">Chapters</div>
+          </div>
+          <div class="flex-1 py-2">
+            <div class="px-4 py-2 text-xs text-zinc-500 hover:bg-zinc-900/50 cursor-pointer flex items-center justify-between">
+              <div>
+                <div class="text-zinc-400">1 · Slow start</div>
+                <div class="text-[10px] text-zinc-600">9:00 AM · 2 moments</div>
+              </div>
+              <div class="text-[10px] text-zinc-600 font-mono">30m</div>
+            </div>
+            <div class="px-4 py-2 text-xs border-l-2 border-orange-400 bg-orange-500/5">
+              <div class="text-zinc-200 font-medium">2 · Research mode</div>
+              <div class="text-[10px] text-zinc-500">10:00 AM · 18 moments</div>
+            </div>
+            <div class="px-4 py-2 text-xs text-zinc-500 hover:bg-zinc-900/50 cursor-pointer flex items-center justify-between">
+              <div>
+                <div class="text-orange-300">3 · Flow ↑</div>
+                <div class="text-[10px] text-zinc-600">11:15 AM · 64 moments · peak focus</div>
+              </div>
+              <div class="text-[10px] text-zinc-600 font-mono">1h 32m</div>
+            </div>
+            <div class="px-4 py-2 text-xs text-zinc-500 hover:bg-zinc-900/50 cursor-pointer flex items-center justify-between">
+              <div>
+                <div class="text-zinc-400">4 · Lunch break</div>
+                <div class="text-[10px] text-zinc-600">12:47 PM · 3 moments</div>
+              </div>
+              <div class="text-[10px] text-zinc-600 font-mono">13m</div>
+            </div>
+            <div class="px-4 py-2 text-xs text-zinc-700 flex items-center justify-between">
+              <div>
+                <div>5 · (writing now)</div>
+                <div class="text-[10px]">1:00 PM · ongoing</div>
+              </div>
+              <div class="text-[10px] text-zinc-600 font-mono">·</div>
+            </div>
+          </div>
+          <div class="border-t border-zinc-800 px-4 py-3">
+            <button class="w-full text-[11px] text-zinc-950 bg-orange-400 hover:bg-orange-300 px-3 py-2 rounded font-medium flex items-center justify-center gap-2">
+              ▶ Auto-scroll story
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-xs text-zinc-500 italic max-w-2xl">Failure mode: generating good chapter breaks requires LLM summarization on every session. If summaries are generic ("You worked in VS Code"), the whole metaphor collapses. Invest here first.</div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- Footer -->
+  <!-- ======================================================================== -->
+  <section class="border-t border-zinc-900 pt-12 space-y-6">
+    <div>
+      <h2 class="text-xl font-medium text-zinc-100 mb-2">Recommendation</h2>
+      <p class="text-zinc-400 text-sm max-w-2xl leading-relaxed">Build <strong class="text-zinc-200">A</strong> in a day as the baseline. Then build <strong class="text-zinc-200">B</strong> on top — the scrubber + gallery is where this approach differentiates. Park C and E until you know what people actually use A and B for.</p>
+    </div>
+    <div class="grid grid-cols-3 gap-3 text-xs text-zinc-500">
+      <div class="border border-zinc-800 rounded p-3">
+        <div class="text-zinc-300 font-medium mb-1">Build first</div>
+        <div>A → B → D</div>
+        <div class="text-[11px] text-zinc-600 mt-1">ship · differentiate · analyze</div>
+      </div>
+      <div class="border border-zinc-800 rounded p-3">
+        <div class="text-zinc-300 font-medium mb-1">Park</div>
+        <div>C (high build cost) · E (narrow trigger problem)</div>
+      </div>
+      <div class="border border-zinc-800 rounded p-3">
+        <div class="text-zinc-300 font-medium mb-1">Maybe layer on</div>
+        <div>F (structural) · G (narrative)</div>
+      </div>
+    </div>
+    <div class="text-[11px] text-zinc-600 pt-8">
+      <span class="font-mono">~/.claude/skills/timeline-patterns/</span> · written 2026-04-21
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // tab switching for Combo F
+  document.querySelectorAll('[data-tab-btn]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-tab-btn');
+      document.querySelectorAll('[data-tab-btn]').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab-btn') === id));
+      document.querySelectorAll('[data-tab-pane]').forEach(p => p.classList.toggle('active', p.getAttribute('data-tab-pane') === id));
+    });
+  });
+
+  // keyboard 1/2/3 for tab switching
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+    const map = { '1': 'today', '2': 'then', '3': 'patterns' };
+    if (map[e.key]) document.querySelector(`[data-tab-btn="${map[e.key]}"]`).click();
+  });
+</script>
+
+</body>
+</html>

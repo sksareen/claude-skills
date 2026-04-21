@@ -1,0 +1,14 @@
+{
+  "name": "sksareen-skills",
+  "owner": {
+    "name": "Savar Sareen",
+    "url": "https://github.com/sksareen"
+  },
+  "plugins": [
+    {
+      "name": "timeline-patterns",
+      "source": "./plugins/timeline-patterns",
+      "description": "UX pattern catalog for timeline, activity feed, and personal memory interfaces — 30+ named patterns, 7 ready-to-build combinations, opinionated tradeoffs, and a visual preview of all combos."
+    }
+  ]
+}
